@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<title>Cadena de Valor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+:root{
+  --primary:#06402B;
+  --primary-2:#04281C;
+  --primary-light:#0a6644;
+  --error:#dc2626;
+  --radius-card:20px;
+  --radius-input:14px;
+  --radius-pill:999px;
+  --card-border:1.5px solid rgba(6,64,43,.14);
+  --card-shadow:0 8px 32px rgba(6,64,43,.12);
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;padding:0;min-height:100%;
+  font-family:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  color:#111;
+  background:url('https://res.cloudinary.com/dqqeavica/image/upload/v1746905870/fondo_verde_tvntsi.png') center/cover fixed no-repeat;
+}
+h1,h2,h3,h4{font-family:'Sora',sans-serif;text-align:center;margin:8px 0 12px}
+
+.container{max-width:760px;margin:0 auto;padding:16px}
+
+.card{
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(16px);
+  border:var(--card-border);
+  border-radius:var(--radius-card);
+  box-shadow:var(--card-shadow);
+  padding:24px 20px 20px;
+  margin:16px auto;
+}
+
+.helper{color:#444;text-align:center;font-size:.95rem;margin:6px 0 14px}
+.muted{color:#666;font-size:.85rem}
+
+label{
+  display:block;
+  font-weight:700;font-size:.78rem;letter-spacing:.7px;text-transform:uppercase;
+  margin:14px 0 6px;color:var(--primary);
+}
+
+input,select,textarea{
+  width:100%;padding:12px;
+  border:1.5px solid rgba(6,64,43,.22);
+  border-radius:var(--radius-input);
+  background:rgba(255,255,255,.92);
+  font-family:'IBM Plex Sans',sans-serif;font-size:16px;
+  outline:none;transition:border-color .2s, box-shadow .2s;
+}
+input:focus,select:focus,textarea:focus{
+  background:#fff;border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(6,64,43,.10);
+}
+
+.check-grid{
+  display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;
+}
+.check-item{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 14px;border-radius:var(--radius-pill);
+  background:rgba(255,255,255,.85);
+  border:1.5px solid rgba(6,64,43,.22);
+  font-size:.88rem;color:var(--primary);font-weight:600;
+  cursor:pointer;transition:background .15s;
+}
+.check-item:hover{background:rgba(6,64,43,.06)}
+.check-item input{width:auto;margin:0;accent-color:var(--primary)}
+
+.radio-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.radio-group .check-item{font-weight:700}
+
+button{
+  width:100%;padding:13px;
+  border:1.5px solid rgba(6,64,43,.30);
+  border-radius:var(--radius-input);
+  background:rgba(255,255,255,.85);
+  font-weight:700;font-size:16px;cursor:pointer;
+  transition:transform .08s, background .18s, color .18s, box-shadow .18s;
+}
+button:hover{
+  background:var(--primary);color:#fff;border-color:var(--primary-2);
+  box-shadow:0 4px 16px rgba(6,64,43,.22);
+  transform:translateY(-1px);
+}
+.btn-primary{
+  background:linear-gradient(135deg,#0a6644 0%,#06402B 100%);
+  color:#fff;border-color:var(--primary-2);
+  box-shadow:0 4px 14px rgba(6,64,43,.28);
+}
+.btn-primary:hover{
+  background:linear-gradient(135deg,#0d7a52 0%,#04281C 100%);
+  box-shadow:0 6px 20px rgba(6,64,43,.36);
+}
+
+.section{
+  background:rgba(6,64,43,.04);
+  border:1.5px solid rgba(6,64,43,.10);
+  border-radius:14px;
+  padding:14px;margin-top:14px;
+  animation:fadeIn .3s ease;
+}
+.section h3{color:var(--primary);margin-top:0;text-align:left}
+
+.hidden{display:none !important}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(-6px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.grid-2{grid-template-columns:1fr}}
+
+.loader{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);
+  display:none;align-items:center;justify-content:center;z-index:9999;
+}
+.loader.show{display:flex}
+.spinner{
+  width:54px;height:54px;
+  border:5px solid rgba(255,255,255,.25);
+  border-top-color:#fff;border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.brand{width:200px;display:block;margin:14px auto 4px;border-radius:12px}
+.center{text-align:center}
+
+.swal2-popup{
+  border-radius:22px !important;
+  font-family:'IBM Plex Sans',sans-serif !important;
+}
+.swal2-title{font-family:'Sora',sans-serif !important;color:var(--primary) !important}
+.swal2-confirm{
+  background:linear-gradient(135deg,#0a6644,#06402B) !important;
+  border-radius:12px !important;
+}
+</style>
+</head>
+<body>
+
+<div class="loader" id="loader"><div class="spinner"></div></div>
+
+<div class="container">
+  <div class="card">
+    <h1 style="color:var(--primary);text-shadow:0 2px 2px rgba(3,23,50,.25)">CADENA DE VALOR</h1>
+    <p class="helper">Diligencia el formulario con tu información comercial. Cada identificación solo puede registrarse <b>una vez</b>.</p>
+
+    <form id="form-cv" autocomplete="off">
+
+      <label>1. Razón social</label>
+      <input id="razonSocial" type="text" placeholder="Nombre comercial o razón social" required />
+
+      <label>2. Número de identificación</label>
+      <input id="identificacion" type="tel" inputmode="numeric" placeholder="NIT o cédula (sin puntos)" required />
+
+      <label>3. Nombre del representante legal</label>
+      <input id="representanteLegal" type="text" required />
+
+      <label>4. Dirección comercial</label>
+      <input id="direccion" type="text" required />
+
+      <label>5. Correo electrónico</label>
+      <input id="correo" type="email" required />
+
+      <label>6. Número de celular</label>
+      <input id="celular" type="tel" inputmode="numeric" placeholder="10 dígitos" required />
+
+      <label>7. ¿Establecimiento formalizado?</label>
+      <div class="radio-group">
+        <label class="check-item"><input type="radio" name="formalizado" value="SI"> Sí</label>
+        <label class="check-item"><input type="radio" name="formalizado" value="NO"> No</label>
+      </div>
+
+      <label>8. ¿Establecimiento no formalizado?</label>
+      <div class="radio-group">
+        <label class="check-item"><input type="radio" name="noFormalizado" value="SI"> Sí</label>
+        <label class="check-item"><input type="radio" name="noFormalizado" value="NO"> No</label>
+      </div>
+
+      <label>9. Sector al que pertenece</label>
+      <select id="sector" required>
+        <option value="" disabled selected>Selecciona un sector</option>
+        <option value="Gastronómico">Gastronómico</option>
+        <option value="Alojamiento">Alojamiento / Hospedaje (urbano o rural)</option>
+        <option value="Agencia">Agencia de viajes y/o operadora</option>
+        <option value="Guia">Guía profesional</option>
+      </select>
+
+      <!-- ============ GASTRONÓMICO ============ -->
+      <div id="sec-gastro" class="section hidden">
+        <h3>Información Gastronómica</h3>
+
+        <label>¿Qué tipo de alimentos ofrece?</label>
+        <div class="check-grid">
+          <label class="check-item"><input type="checkbox" name="gastroTipos" value="Viudo de pescado"> Viudo de pescado</label>
+          <label class="check-item"><input type="checkbox" name="gastroTipos" value="Tamal"> Tamal</label>
+          <label class="check-item"><input type="checkbox" name="gastroTipos" value="Lechona"> Lechona</label>
+          <label class="check-item"><input type="checkbox" name="gastroTipos" value="Amasijos"> Amasijos</label>
+        </div>
+
+        <label>¿Prepara alimentos para la mesa?</label>
+        <div class="radio-group">
+          <label class="check-item"><input type="radio" name="gastroPreparaMesa" value="SI"> Sí</label>
+          <label class="check-item"><input type="radio" name="gastroPreparaMesa" value="NO"> No</label>
+        </div>
+
+        <label>¿Prepara alimentos para llevar?</label>
+        <div class="radio-group">
+          <label class="check-item"><input type="radio" name="gastroPreparaLlevar" value="SI"> Sí</label>
+          <label class="check-item"><input type="radio" name="gastroPreparaLlevar" value="NO"> No</label>
+        </div>
+
+        <label>¿Tiene registro INVIMA?</label>
+        <div class="radio-group">
+          <label class="check-item"><input type="radio" name="gastroInvima" value="SI"> Sí</label>
+          <label class="check-item"><input type="radio" name="gastroInvima" value="NO"> No</label>
+        </div>
+
+        <label>Capacidad de personas para atender en mesa</label>
+        <input id="gastroCapacidad" type="tel" inputmode="numeric" placeholder="Ej: 24" />
+
+        <label>¿Su personal cuenta con certificación de Manipulación de Alimentos vigente?</label>
+        <div class="radio-group">
+          <label class="check-item"><input type="radio" name="gastroCertManipulacion" value="SI"> Sí</label>
+          <label class="check-item"><input type="radio" name="gastroCertManipulacion" value="NO"> No</label>
+        </div>
+
+        <label>¿Le gustaría participar en algún evento gastronómico?</label>
+        <div class="radio-group">
+          <label class="check-item"><input type="radio" name="gastroParticipaEvento" value="SI"> Sí</label>
+          <label class="check-item"><input type="radio" name="gastroParticipaEvento" value="NO"> No</label>
+        </div>
+
+        <label>¿Por qué?</label>
+        <textarea id="gastroPorque" rows="2" placeholder="Cuéntanos brevemente"></textarea>
+
+        <label>¿Qué tipo de ayudas le gustaría para su negocio?</label>
+        <div class="check-grid">
+          <label class="check-item"><input type="checkbox" name="gastroAyudas" value="Set de seguridad (delantal, gorro, coge ollas)"> Set de seguridad</label>
+          <label class="check-item"><input type="checkbox" name="gastroAyudas" value="Menaje (ollas, pailas)"> Menaje (ollas, pailas)</label>
+          <label class="check-item"><input type="checkbox" name="gastroAyudas" value="Set de utensilios de cocina"> Utensilios de cocina</label>
+          <label class="check-item"><input type="checkbox" name="gastroAyudas" value="Menaje para la mesa (juego de mesa con sillas)"> Menaje para la mesa</label>
+          <label class="check-item"><input type="checkbox" name="gastroAyudas" value="Publicidad y mercadeo"> Publicidad y mercadeo</label>
+        </div>
+      </div>
+
+      <!-- ============ ALOJAMIENTO ============ -->
+      <div id="sec-aloj" class="section hidden">
+        <h3>Información de Alojamiento</h3>
+
+        <label>RNT (Registro Nacional de Turismo)</label>
+        <input id="alojRnt" type="text" placeholder="Número de RNT (si aplica)" />
+
+        <label>Servicios que ofrece</label>
+        <div class="check-grid">
+          <label class="check-item"><input type="checkbox" name="alojServicios" value="Wifi"> Wifi</label>
+          <label class="check-item"><input type="checkbox" name="alojServicios" value="Aire acondicionado"> Aire acondicionado</label>
+          <label class="check-item"><input type="checkbox" name="alojServicios" value="Ventilador"> Ventilador</label>
+          <label class="check-item"><input type="checkbox" name="alojServicios" value="Desayuno"> Desayuno</label>
+          <label class="check-item"><input type="checkbox" name="alojServicios" value="Parqueadero"> Parqueadero</label>
+          <label class="check-item"><input type="checkbox" name="alojServicios" value="Pet-Friendly"> Pet-Friendly</label>
+          <label class="check-item"><input type="checkbox" name="alojServicios" value="Piscina"> Piscina</label>
+          <label class="check-item"><input type="checkbox" name="alojServicios" value="Zonas verdes"> Zonas verdes</label>
+          <label class="check-item"><input type="checkbox" name="alojServicios" value="Lavandería"> Lavandería</label>
+          <label class="check-item"><input type="checkbox" name="alojServicios" value="Gimnasio"> Gimnasio</label>
+          <label class="check-item"><input type="checkbox" name="alojServicios" value="Servicio de Bar"> Bar</label>
+          <label class="check-item"><input type="checkbox" name="alojServicios" value="Servicio de restaurante"> Restaurante</label>
+        </div>
+
+        <label>Total de camas (capacidad del hotel)</label>
+        <input id="alojTotalCamas" type="tel" inputmode="numeric" />
+
+        <h4 style="text-align:left;color:var(--primary);margin-top:14px">Habitaciones por capacidad</h4>
+        <div class="grid-2">
+          <div>
+            <label>Para 2 personas</label>
+            <input id="alojHab2" type="tel" inputmode="numeric" placeholder="0" />
+          </div>
+          <div>
+            <label>Para 3 personas</label>
+            <input id="alojHab3" type="tel" inputmode="numeric" placeholder="0" />
+          </div>
+          <div>
+            <label>Para 4 personas</label>
+            <input id="alojHab4" type="tel" inputmode="numeric" placeholder="0" />
+          </div>
+          <div>
+            <label>Para 5 personas</label>
+            <input id="alojHab5" type="tel" inputmode="numeric" placeholder="0" />
+          </div>
+          <div>
+            <label>Para 6 personas o más</label>
+            <input id="alojHab6mas" type="tel" inputmode="numeric" placeholder="0" />
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ AGENCIA ============ -->
+      <div id="sec-agen" class="section hidden">
+        <h3>Información de Agencia</h3>
+
+        <label>RNT (Registro Nacional de Turismo)</label>
+        <input id="agenRnt" type="text" placeholder="Número de RNT (si aplica)" />
+
+        <label>¿Qué servicios ofrece?</label>
+        <textarea id="agenServicios" rows="2" placeholder="Describe los servicios"></textarea>
+
+        <label>Rutas o paquetes nacionales</label>
+        <textarea id="agenRutasNac" rows="2" placeholder="Ej: Cartagena, Eje cafetero..."></textarea>
+
+        <label>Rutas o paquetes internacionales</label>
+        <textarea id="agenRutasInt" rows="2" placeholder="Ej: Panamá, México..."></textarea>
+      </div>
+
+      <!-- ============ GUÍA ============ -->
+      <div id="sec-guia" class="section hidden">
+        <h3>Información de Guía Profesional</h3>
+
+        <label>Número de Tarjeta Profesional</label>
+        <input id="guiaTarjeta" type="text" placeholder="Número de la tarjeta profesional" />
+      </div>
+
+      <div style="margin-top:18px">
+        <button type="button" class="btn-primary" id="btn-guardar">Registrar</button>
+      </div>
+
+    </form>
+
+    <p class="center muted" style="margin-top:14px">Copyright © <b>Cadena de Valor</b></p>
+  </div>
+</div>
+
+<script>
+/* ============ CONFIG ============ */
+const API_BASE = 'https://script.google.com/macros/s/AKfycby8knOfX1yB0tLjXd_bE-4pwEGvjl73ur7K_T7ncZj6MrDYUqOf6r1kXePooyeHMLv2mw/exec';
+
+/* ============ Helpers ============ */
+const $ = (id) => document.getElementById(id);
+const loader = $('loader');
+function showLoader(){ loader.classList.add('show'); }
+function hideLoader(){ loader.classList.remove('show'); }
+
+function getRadio(name){
+  const el = document.querySelector('input[name="'+name+'"]:checked');
+  return el ? el.value : '';
+}
+function getChecks(name){
+  return Array.from(document.querySelectorAll('input[name="'+name+'"]:checked')).map(e=>e.value);
+}
+function onlyDigits(v, max){
+  const s = String(v||'').replace(/\D/g,'');
+  return max ? s.slice(0,max) : s;
+}
+
+/* ============ Sanitización ============ */
+['identificacion','celular','gastroCapacidad','alojTotalCamas','alojHab2','alojHab3','alojHab4','alojHab5','alojHab6mas']
+.forEach(id=>{
+  const el = $(id);
+  if(!el) return;
+  el.addEventListener('input', ()=>{ el.value = onlyDigits(el.value); });
+});
+
+/* ============ Mostrar sección por sector ============ */
+$('sector').addEventListener('change', ()=>{
+  const v = $('sector').value;
+  ['sec-gastro','sec-aloj','sec-agen','sec-guia'].forEach(id => $(id).classList.add('hidden'));
+  if(v === 'Gastronómico') $('sec-gastro').classList.remove('hidden');
+  if(v === 'Alojamiento')  $('sec-aloj').classList.remove('hidden');
+  if(v === 'Agencia')      $('sec-agen').classList.remove('hidden');
+  if(v === 'Guia')         $('sec-guia').classList.remove('hidden');
+});
+
+/* ============ Verificar duplicado al salir del input ============ */
+$('identificacion').addEventListener('blur', async ()=>{
+  const id = $('identificacion').value.trim();
+  if(!id) return;
+  try{
+    const r = await fetch(API_BASE + '?action=checkIdentificacion&identificacion=' + encodeURIComponent(id));
+    const j = await r.json();
+    if(j.ok && j.data && j.data.exists){
+      Swal.fire({
+        icon:'warning',
+        title:'Identificación ya registrada',
+        text:'Esta identificación ya fue registrada anteriormente. No es posible duplicar registros.'
+      });
+      $('identificacion').value = '';
+      $('identificacion').focus();
+    }
+  }catch(_){}
+});
+
+/* ============ Validación de correo ============ */
+function isEmail(s){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s||'').trim());
+}
+
+/* ============ Guardar ============ */
+$('btn-guardar').addEventListener('click', async ()=>{
+
+  // Validaciones básicas
+  const requeridos = [
+    {id:'razonSocial', label:'Razón social'},
+    {id:'identificacion', label:'Número de identificación'},
+    {id:'representanteLegal', label:'Representante legal'},
+    {id:'direccion', label:'Dirección comercial'},
+    {id:'correo', label:'Correo'},
+    {id:'celular', label:'Celular'}
+  ];
+
+  const faltantes = [];
+  for(const r of requeridos){
+    if(!String($(r.id).value||'').trim()) faltantes.push(r.label);
+  }
+  if(faltantes.length){
+    Swal.fire({icon:'warning', title:'Campos requeridos', html:'Faltan:<br><b>'+faltantes.join('<br>')+'</b>'});
+    return;
+  }
+
+  if(!/^\d{10}$/.test($('celular').value)){
+    Swal.fire({icon:'warning', title:'Celular inválido', text:'Debe tener 10 dígitos.'});
+    return;
+  }
+
+  if(!isEmail($('correo').value)){
+    Swal.fire({icon:'warning', title:'Correo inválido'});
+    return;
+  }
+
+  if(!$('sector').value){
+    Swal.fire({icon:'warning', title:'Selecciona un sector'});
+    return;
+  }
+
+  const sector = $('sector').value;
+
+  // Construir payload
+  const body = {
+    razonSocial:        $('razonSocial').value.trim(),
+    identificacion:     $('identificacion').value.trim(),
+    representanteLegal: $('representanteLegal').value.trim(),
+    direccion:          $('direccion').value.trim(),
+    correo:             $('correo').value.trim(),
+    celular:            $('celular').value.trim(),
+    formalizado:        getRadio('formalizado'),
+    noFormalizado:      getRadio('noFormalizado'),
+    sector:             sector
+  };
+
+  if(sector === 'Gastronómico'){
+    body.gastroTipos             = getChecks('gastroTipos');
+    body.gastroPreparaMesa       = getRadio('gastroPreparaMesa');
+    body.gastroPreparaLlevar     = getRadio('gastroPreparaLlevar');
+    body.gastroInvima            = getRadio('gastroInvima');
+    body.gastroCapacidad         = $('gastroCapacidad').value;
+    body.gastroCertManipulacion  = getRadio('gastroCertManipulacion');
+    body.gastroParticipaEvento   = getRadio('gastroParticipaEvento');
+    body.gastroPorque            = $('gastroPorque').value;
+    body.gastroAyudas            = getChecks('gastroAyudas');
+  }
+
+  if(sector === 'Alojamiento'){
+    body.alojRnt        = $('alojRnt').value;
+    body.alojServicios  = getChecks('alojServicios');
+    body.alojTotalCamas = $('alojTotalCamas').value;
+    body.alojHab2       = $('alojHab2').value;
+    body.alojHab3       = $('alojHab3').value;
+    body.alojHab4       = $('alojHab4').value;
+    body.alojHab5       = $('alojHab5').value;
+    body.alojHab6mas    = $('alojHab6mas').value;
+  }
+
+  if(sector === 'Agencia'){
+    body.agenRnt       = $('agenRnt').value;
+    body.agenServicios = $('agenServicios').value;
+    body.agenRutasNac  = $('agenRutasNac').value;
+    body.agenRutasInt  = $('agenRutasInt').value;
+  }
+
+  if(sector === 'Guia'){
+    body.guiaTarjeta = $('guiaTarjeta').value;
+  }
+
+  // Enviar
+  showLoader();
+  try{
+    const r = await fetch(API_BASE + '?action=guardarCadenaValor', {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(body)
+    });
+    const j = await r.json();
+    hideLoader();
+
+    if(!j.ok){
+      const msg = String(j.error||'');
+      if(msg.indexOf('DUPLICADO') !== -1){
+        Swal.fire({
+          icon:'warning',
+          title:'Identificación duplicada',
+          text:'Esta identificación ya fue registrada anteriormente.'
+        });
+        return;
+      }
+      Swal.fire({icon:'error', title:'Error', text: msg});
+      return;
+    }
+
+    await Swal.fire({
+      icon:'success',
+      title:'¡Registro exitoso!',
+      text:'Tu información fue guardada correctamente.',
+      timer:3000,
+      showConfirmButton:false
+    });
+
+    document.getElementById('form-cv').reset();
+    ['sec-gastro','sec-aloj','sec-agen','sec-guia'].forEach(id => $(id).classList.add('hidden'));
+
+  }catch(e){
+    hideLoader();
+    Swal.fire({icon:'error', title:'Error de conexión', text: String(e.message||e)});
+  }
+});
+</script>
+
+</body>
+</html>
