@@ -183,13 +183,7 @@ button:hover{
         <label class="check-item"><input type="radio" name="formalizado" value="NO"> No</label>
       </div>
 
-      <label>8. ¿Establecimiento no formalizado?</label>
-      <div class="radio-group">
-        <label class="check-item"><input type="radio" name="noFormalizado" value="SI"> Sí</label>
-        <label class="check-item"><input type="radio" name="noFormalizado" value="NO"> No</label>
-      </div>
-
-      <label>9. Sector al que pertenece</label>
+      <label>8. Sector al que pertenece</label>
       <select id="sector" required>
         <option value="" disabled selected>Selecciona un sector</option>
         <option value="Gastronómico">Gastronómico</option>
@@ -454,7 +448,6 @@ $('btn-guardar').addEventListener('click', async ()=>{
     correo:             $('correo').value.trim(),
     celular:            $('celular').value.trim(),
     formalizado:        getRadio('formalizado'),
-    noFormalizado:      getRadio('noFormalizado'),
     sector:             sector
   };
 
